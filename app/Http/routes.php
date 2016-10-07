@@ -16,6 +16,23 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::group(['prefix'=>'api','middleware'=>'oauth', 'as'=>'api.'], function(){
+	Route::get('/pedidos', function () {
+        return [
+            'id' => 1,
+            'client' => 'Gerosn',
+            'total' => 10
+        ];
+    });
+    Route::get('/teste', function () {
+        return "teste";
+    });
+});
+
+Route::post('oauth/access_token', function() {
+    return Response::json(Authorizer::issueAccessToken());
+});
+
 Route::group(['prefix'=>'admin','middleware'=>'auth.checkrole:admin', 'as'=>'admin.'], function(){
 
 	Route::get('/categories', ['as'=>'categories.index','uses'=>'CategoriesController@index']);
