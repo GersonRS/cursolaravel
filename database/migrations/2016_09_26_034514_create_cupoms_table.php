@@ -21,7 +21,7 @@ class CreateCupomsTable extends Migration
             $table->timestamps();
 		});
 		
-		Schema::table('cupoms', function(Blueprint $table) {
+		Schema::table('orders', function(Blueprint $table) {
             $table->integer('cupom_id')->unsigned()->nullable();
             $table->foreign('cupom_id')->references('id')->on('cupoms');
 		});

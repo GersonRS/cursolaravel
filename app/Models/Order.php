@@ -16,10 +16,23 @@ class Order extends Model implements Transformable
     'total',
     'status'
     ];
+
+    public function transform()
+    {
+        return [
+            'order' => $this->id,
+            'items' => $this->items,
+        ];
+    }
     
     public function client()
     {
     	return $this->belongsTo(Client::class);
+    }
+
+    public function cupom()
+    {
+        return $this->belongsTo(Cupom::class);
     }
 
     public function items()

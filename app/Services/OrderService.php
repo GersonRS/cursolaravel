@@ -6,6 +6,7 @@ use Ecommerce\Repositories\OrderRepository;
 use Ecommerce\Repositories\ProductRepository;
 use Illuminate\Support\Facades\DB;
 use Ecommerce\Repositories\CupomRepository;
+use Ecommerce\Models\Order;
 
 class OrderService {
 	
@@ -38,7 +39,7 @@ class OrderService {
 			$data ['status'] = 0;
 			
 			if (isset ( $data ['cupom_code'] )) {
-				$cupom = $this->cupomRepository->findByFiel ( 'code', $data ['cupom_code'] )->first ();
+				$cupom = $this->cupomRepository->findByField('code', $data['cupom_code'])->first();
 				
 				$data ['cupom_code'] = $cupom->id;
 				
@@ -69,9 +70,22 @@ class OrderService {
 			}
 			$order->save ();
 			DB::commit();
+			return $order;
 		} catch (Exception $e){
 			DB::rollback();
 			throw $e;
 		}
+	}
+
+
+	public function updateStatus($id, $idDeliveryman, $status)
+	{
+		$order = $this->orderRepository->getByIdAndDeliverymanId($id,$idDeliveryman);
+		if ($order instanceof Order) {
+			$order->status = $status;
+			$order->save();
+			return $order;
+		}
+		return false;
 	}
 }

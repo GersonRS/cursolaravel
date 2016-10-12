@@ -11,6 +11,7 @@ use Ecommerce\Repositories\UserRepository;
 use Ecommerce\Repositories\ProductRepository;
 use Ecommerce\Services\OrderService;
 use Illuminate\Support\Facades\Auth;
+use Ecommerce\Http\Requests\CheckoutRequest;
 
 class CheckoutController extends Controller
 {
@@ -66,7 +67,7 @@ class CheckoutController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CheckoutRequest $request)
     {
         $data = $request->all();
         
