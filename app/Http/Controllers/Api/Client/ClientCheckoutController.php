@@ -18,6 +18,7 @@ class ClientCheckoutController extends Controller
 	private $orderRepository;
 	private $userRepository;
 	private $service;	
+    private $with = ['client','items','cupom'];
 	
 	public function __construct(
 			OrderRepository $orderRepository,
@@ -40,7 +41,10 @@ class ClientCheckoutController extends Controller
         $id = Authorizer::getResourceOwnerId();
         $clientId = $this->userRepository->find($id)->client->id;
         
-        $orders = $this->orderRepository->with(['items'])->scopeQuery(function($query) use($clientId){
+        $orders = $this->orderRepository
+        ->skipPresenter(false)
+        ->with($this->with)
+        ->scopeQuery(function($query) use($clientId){
         	return $query->where('client_id',$clientId);
         })->paginate();
         
@@ -60,8 +64,10 @@ class ClientCheckoutController extends Controller
         $clientId = $this->userRepository->find($id)->client->id;
         $data['client_id'] = $clientId;
         $o = $this->service->create($data);
-        $orders = $this->orderRepository->with(['items'])->find($o->id);
-        return $orders;
+        return $this->orderRepository
+        ->skipPresenter(false)
+        ->with($this->with)
+        ->find($o->id);
     }
 
     /**
@@ -72,10 +78,10 @@ class ClientCheckoutController extends Controller
      */
     public function show($id)
     {
-        $o = $this->orderRepository->with(['client','items','cupom'])->find($id);
-        // $o->items->each(function($item){
-        //     $item->product;
-        // });
+        $o = $this->orderRepository
+        ->skipPresenter(false)
+        ->with($this->with)
+        ->find($id);
         return $o;
     }
 }

@@ -7,6 +7,7 @@ use Prettus\Repository\Criteria\RequestCriteria;
 use Ecommerce\Repositories\UserRepository;
 use Ecommerce\Models\User;
 use Ecommerce\Validators\UserValidator;
+use Ecommerce\Presenters\UserPresenter;
 
 /**
  * Class UserRepositoryEloquent
@@ -14,6 +15,8 @@ use Ecommerce\Validators\UserValidator;
  */
 class UserRepositoryEloquent extends BaseRepository implements UserRepository
 {
+    protected $skipPresenter = true;
+    
     /**
      * Specify Model class name
      *
@@ -35,5 +38,10 @@ class UserRepositoryEloquent extends BaseRepository implements UserRepository
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    public function presenter()
+    {
+        return UserPresenter::class;
     }
 }

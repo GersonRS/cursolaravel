@@ -8,6 +8,7 @@ use Ecommerce\Repositories\OrderRepository;
 use Ecommerce\Models\Order;
 use Ecommerce\Validators\OrderValidator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Ecommerce\Presenters\OrderPresenter;
 
 /**
@@ -16,6 +17,7 @@ use Ecommerce\Presenters\OrderPresenter;
  */
 class OrderRepositoryEloquent extends BaseRepository implements OrderRepository
 {
+    protected $skipPresenter = true;
 
     public function getByIdAndDeliverymanId($id,$idDeliveryman)
     {
@@ -23,13 +25,20 @@ class OrderRepositoryEloquent extends BaseRepository implements OrderRepository
             'id' => $id,
             'user_deliveryman_id' => $idDeliveryman
         ]);
-        
-        $result = $result->first();
-        if ($result) {
-            $result->items->each(function($item){
-                $item->product;
-            });
+
+        if ($result instanceof Collection) {
+            $result = $result->first();
+        }else{
+            if (isset($result['data']) && count($result['data'])==1) {
+                $result = [
+                        'data' => $result['data'][0]
+                ];
+            }else{
+                throw new ModelNotFoundException('Order não existe');
+                
+            }
         }
+
         return $result;
     }
 
