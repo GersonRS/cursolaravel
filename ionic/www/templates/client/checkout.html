@@ -1,0 +1,15 @@
+<ion-view view-title="Pedidos">
+  <div class="bar bar-subheader">
+    <h2 class="title">Total: R$ {{total}}</h2>
+  </div>
+  <ion-content class="padding has-subheader">
+    <ion-list>
+        <ion-item ng-repeat="o in items">
+            {{o.name}}
+            <span class="item-note">
+              <i class="ion ion-cash"> {{ o.amount }}</i>
+            </span>
+        </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

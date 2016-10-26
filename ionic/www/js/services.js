@@ -1,50 +1,165 @@
 angular.module('starter.services', [])
 
-.factory('Chats', function() {
-  // Might use a resource here that returns a JSON array
+.factory('Product', ['$resource','appConfig',function($resource,appConfig) {
 
-  // Some fake testing data
-  var chats = [{
-    id: 0,
-    name: 'Ben Sparrow',
-    lastText: 'You on your way?',
-    face: 'img/ben.png'
-  }, {
-    id: 1,
-    name: 'Max Lynx',
-    lastText: 'Hey, it\'s me',
-    face: 'img/max.png'
-  }, {
-    id: 2,
-    name: 'Adam Bradleyson',
-    lastText: 'I should buy a boat',
-    face: 'img/adam.jpg'
-  }, {
-    id: 3,
-    name: 'Perry Governor',
-    lastText: 'Look at my mukluks!',
-    face: 'img/perry.png'
-  }, {
-    id: 4,
-    name: 'Mike Harrington',
-    lastText: 'This is wicked good ice cream.',
-    face: 'img/mike.png'
-  }];
-
-  return {
-    all: function() {
-      return chats;
-    },
-    remove: function(chat) {
-      chats.splice(chats.indexOf(chat), 1);
-    },
-    get: function(chatId) {
-      for (var i = 0; i < chats.length; i++) {
-        if (chats[i].id === parseInt(chatId)) {
-          return chats[i];
-        }
-      }
-      return null;
+  return $resource(appConfig.baseUrl+'/api/client/products',{},{
+    query: {
+      isArray: false
     }
-  };
-});
+  });
+
+}])
+.factory('User', ['$resource','appConfig',function($resource,appConfig) {
+
+  return $resource(appConfig.baseUrl+'/api/authenticated',{},{
+    query: {
+      isArray: false
+    }
+  });
+
+}])
+.factory("$localStorage", ['$window', function($window){
+        return {
+            set: function(key, value){
+                $window.localStorage[key] = value;
+                return $window.localStorage[key];
+            },
+
+            get: function (key, defaultValue) {
+                return $window.localStorage[key] || defaultValue;
+            },
+
+            setObject: function (key, value) {
+                $window.localStorage[key] = JSON.stringify(value);
+
+                return this.getObject(key);
+            },
+
+            getObject: function (key) {
+                return JSON.parse($window.localStorage[key] || null);
+            }
+        }
+}])
+.service('$cart', ['$localStorage', function ($localStorage) {
+
+        var key = 'cart', cartAux = $localStorage.getObject(key);
+
+        if(!cartAux)
+        {
+            initCart();
+        }
+
+        this.clear = function () {
+            initCart();
+        };
+
+        this.get = function () {
+            return $localStorage.getObject(key);
+        };
+
+        this.getItem = function (i) {
+            return this.get().items[i];
+        };
+
+        this.addItem = function (item) {
+
+            var cart = this.get(), itemAux, exists = false;
+
+            for(var index in cart.items)
+            {
+                itemAux = cart.items[index];
+
+                if (itemAux.id == item.id)
+                {
+                    itemAux.amount = item.amount + itemAux.amount;
+                    itemAux.subtotal = calculateSubTotal(itemAux);
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists)
+            {
+                item.subtotal = calculateSubTotal(item);
+
+                cart.items.push(item);
+            }
+
+            cart.total = getTotal(cart.items);
+            $localStorage.setObject(key, cart);
+        };
+
+        this.removeItem = function (i) {
+            var cart = this.get();
+            cart.items.splice(i, 1);
+            cart.total = getTotal(cart.items);
+
+            $localStorage.setObject(key, cart);
+        };
+
+        this.updateQtd = function (i, amount) {
+            var cart = this.get(), itemAux = cart.items[i];
+            itemAux.amount = amount;
+            itemAux.subtotal = calculateSubTotal(itemAux);
+            cart.total = getTotal(cart.items);console.log('cart.total = ' + cart.total);
+            $localStorage.setObject(key, cart);
+        };
+
+        this.setCupom = function (code, value) {
+            var cart = this.get();
+
+            cart.cupom = {
+                code: code,
+                value: value
+            };
+
+            $localStorage.setObject(key, cart);
+        };
+
+        this.removeCupom = function () {
+            var cart = this.get();
+
+            cart.cupom = {
+                code: null,
+                value: null
+            };
+
+            $localStorage.setObject(key, cart);
+        };
+        
+        this.getTotalFinal = function () {
+          var cart = this.get();
+
+            return cart.total - (cart.cupom.value || 0);
+        };
+
+        function calculateSubTotal(item)
+        {
+            return item.price * item.amount;
+        }
+
+        function getTotal(items)
+        {
+            var sum = 0;
+
+            angular.forEach(items, function(item){
+                sum += item.subtotal;
+
+            });
+
+            return sum;
+        }
+
+        function initCart()
+        {
+            $localStorage.setObject(key, {
+                items: [],
+                total: 0,
+                cupom:{
+                    code: null,
+                    value: null
+                }
+            });
+        }
+
+}]);

@@ -16,12 +16,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['prefix'=>'api','middleware'=>'oauth', 'as'=>'api.'], function(){
+Route::group(['middleware'=>'cors'],function(){
+	Route::group(['prefix'=>'api','middleware'=>'oauth', 'as'=>'api.'], function(){
 	Route::group(['prefix'=>'client', 'middleware' => 'oauth.checkrole:client', 'as'=>'client.'], function(){
 		Route::resource('order',
 		'Api\Client\ClientCheckoutController', [
 		'except' => ['create', 'edit', 'destroy']
 		]);
+		Route::get('products','Api\Client\ClientProductController@index');
 	});
 	Route::get('authenticated', ['as'=>'authenticated','uses'=>'UsersController@authenticated']);
 	Route::group(['prefix'=>'deliveryman','middleware' => 'oauth.checkrole:deliveryman','as'=>'deliveryman.'], function(){
@@ -35,11 +37,13 @@ Route::group(['prefix'=>'api','middleware'=>'oauth', 'as'=>'api.'], function(){
 			]);
 	});
 	
-});
-
-Route::post('oauth/access_token', function() {
+    });
+    Route::post('oauth/access_token', function() {
     return Response::json(Authorizer::issueAccessToken());
 });
+});
+
+
 
 Route::group(['prefix'=>'admin','middleware'=>'auth.checkrole:admin', 'as'=>'admin.'], function(){
 

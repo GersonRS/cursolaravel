@@ -1,28 +1,85 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope) {})
-
-.controller('ChatsCtrl', function($scope, Chats) {
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
-
-  $scope.chats = Chats.all();
-  $scope.remove = function(chat) {
-    Chats.remove(chat);
+.controller('LoginCtrl', [
+  '$scope', 'OAuth', '$state', '$ionicPopup', function($scope,OAuth,$state,$ionicPopup) {
+  $scope.user = {
+    username:'',
+    password:''
   };
-})
-
-.controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
-  $scope.chat = Chats.get($stateParams.chatId);
-})
-
-.controller('AccountCtrl', function($scope) {
-  $scope.settings = {
-    enableFriends: true
+  $scope.login = function(){
+    OAuth.getAccessToken($scope.user)
+    .then(function(data){
+      $state.go('client.checkout');
+    },function(responseError){
+      $ionicPopup.alert({
+        title: 'Don\'t eat that!',
+        template: 'It might taste good'
+      });
+    });
   };
-});
+}])
+
+.controller('HomeCtrl', [
+  "$scope","User","$ionicLoading", "$ionicPopup",
+  function($scope,User,$ionicLoading, $ionicPopup) {
+    
+    $ionicLoading.show({
+        template: "Carregando..."
+    });
+
+    User.query({},
+      function(data){
+        $scope.user = data;
+        $ionicLoading.hide();
+    },
+      function(dataError){
+            $ionicLoading.hide();
+            $ionicPopup.alert({
+                title: "Problemas em exibir os produtos",
+                template: "dataError = " + JSON.stringify(dataError)
+            });
+      });
+}])
+
+.controller('ClientCheckoutCtrl', [
+  '$scope','$state','$cart',
+  function($scope,$state,$cart) {
+    var cart = $cart.get();
+    $scope.items = cart.items;
+    $scope.total = cart.total;
+}])
+
+.controller('ClientCheckoutDetailCtrl', function($scope) {})
+
+.controller("ClientViewProductCtrl", [
+        "$scope", "$state", "Product", "$ionicLoading", "$cart", "$ionicPopup",
+        function($scope, $state, Product, $ionicLoading, $cart, $ionicPopup){
+
+            $scope.products = [];
+
+            $ionicLoading.show({
+                template: "Carregando..."
+            });
+
+            Product.query({}, function(data){
+                $scope.products = data.data;
+                $ionicLoading.hide();
+            }, function(dataError){
+                $ionicLoading.hide();
+                $ionicPopup.alert({
+                    title: "Problemas em exibir os produtos",
+                    template: "dataError = " + JSON.stringify(dataError)
+
+                });
+
+            });
+
+            $scope.addItem = function(item){
+                item.amount = 1;
+                $cart.addItem(item);//console.log('cart = ' + $cart);
+
+                //cart.items.push(item);
+                $state.go('client.checkout');
+            };
+
+}]);
