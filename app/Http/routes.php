@@ -18,6 +18,7 @@ Route::get('/', function () {
 
 Route::group(['middleware'=>'cors'],function(){
 	Route::group(['prefix'=>'api','middleware'=>'oauth', 'as'=>'api.'], function(){
+	Route::get('cupom/{code}', 'Api\CupomsController@show');	
 	Route::group(['prefix'=>'client', 'middleware' => 'oauth.checkrole:client', 'as'=>'client.'], function(){
 		Route::resource('order',
 		'Api\Client\ClientCheckoutController', [

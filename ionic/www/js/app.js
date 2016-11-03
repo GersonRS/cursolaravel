@@ -9,7 +9,7 @@ angular.module('starter', [
   'ionic', 'starter.controllers', 'starter.services', 'angular-oauth2','ngResource'
   ])
 .constant('appConfig',{
-  baseUrl: 'http://curso.app'
+  baseUrl: 'http://192.168.1.3:8000'
 })
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -57,6 +57,7 @@ angular.module('starter', [
   })
 
   .state('client.checkout', {
+    cache: false,
     url: '/checkout',
     views: {
       'client.checkout': {
@@ -68,7 +69,7 @@ angular.module('starter', [
   .state('client.checkout_item_detail', {
     url: '/checkout/detail/:index',
     views: {
-      'client.checkout_item_detail': {
+      'client.checkout': {
         templateUrl: 'templates/client/checkout_item_detail.html',
         controller: 'ClientCheckoutDetailCtrl'
       }
@@ -80,6 +81,16 @@ angular.module('starter', [
       'client.view_products': {
         templateUrl: 'templates/client/view_products.html',
         controller: 'ClientViewProductCtrl'
+      }
+    }
+  })
+  .state('client.checkout_successful', {
+    cache: false,
+    url: '/checkout/successful',
+    views: {
+      'client.checkout': {
+        templateUrl: 'templates/client/checkout_successful.html',
+        controller: 'ClientCheckoutSuccessful'
       }
     }
   })
@@ -97,7 +108,7 @@ angular.module('starter', [
   });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/home');
+  $urlRouterProvider.otherwise('/login');
 
 })
 .service('cart',function(){

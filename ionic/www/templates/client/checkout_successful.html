@@ -1,0 +1,26 @@
+<ion-view view-title="Pedido feito com sucesso">
+  <div class="bar bar-balanced bar-subheader">
+    <h2 class="title">Total: R$ {{total}}</h2>
+  </div>
+  <ion-content class="padding has-subheader">
+    <ion-list>
+        <ion-item class="item-dark item-icon-left" ng-show="cupom.value != null">
+          <strong>Cupom</strong>
+          <span class="badge badge-dark">- R$ {{cupom.value}}</span>
+        </ion-item>
+        <ion-item ng-repeat="o in items">
+            <h2>{{o.name}}</h2>
+            <div class="row">
+              <div class="col col-50">
+                Amount: {{o.amount}}<br/>
+                <i class="ion ion-cash"> {{o.price}}</i>
+              </div>
+              <div class="col col-50 text-right">
+                <i class="ion ion-social-usd"> {{o.amount * o.price}}</i>
+              </div>
+            </div>
+        </ion-item>
+    </ion-list>
+    <button type="button" class="button button-royal button-full" ng-click="openListOrder()">Ver meus pedidos</button>
+  </ion-content>
+</ion-view>

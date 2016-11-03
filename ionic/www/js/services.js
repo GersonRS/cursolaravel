@@ -9,6 +9,15 @@ angular.module('starter.services', [])
   });
 
 }])
+.factory('Cupom', ['$resource','appConfig',function($resource,appConfig) {
+
+  return $resource(appConfig.baseUrl+'/api/cupom/:code',{code: '@code'},{
+    query: {
+      isArray: false
+    }
+  });
+
+}])
 .factory('User', ['$resource','appConfig',function($resource,appConfig) {
 
   return $resource(appConfig.baseUrl+'/api/authenticated',{},{
@@ -71,7 +80,7 @@ angular.module('starter.services', [])
 
                 if (itemAux.id == item.id)
                 {
-                    itemAux.amount = item.amount + itemAux.amount;
+                    itemAux.amount++;
                     itemAux.subtotal = calculateSubTotal(itemAux);
                     exists = true;
                     break;
@@ -98,10 +107,11 @@ angular.module('starter.services', [])
         };
 
         this.updateQtd = function (i, amount) {
-            var cart = this.get(), itemAux = cart.items[i];
+            var cart = this.get(),
+                itemAux = cart.items[i];
             itemAux.amount = amount;
             itemAux.subtotal = calculateSubTotal(itemAux);
-            cart.total = getTotal(cart.items);console.log('cart.total = ' + cart.total);
+            cart.total = getTotal(cart.items);
             $localStorage.setObject(key, cart);
         };
 
@@ -161,5 +171,14 @@ angular.module('starter.services', [])
                 }
             });
         }
+
+}])
+.factory('Order', ['$resource','appConfig',function($resource,appConfig) {
+
+  return $resource(appConfig.baseUrl+'/api/client/order/:id',{id:'@id'},{
+    query: {
+      isArray: false
+    }
+  });
 
 }]);
