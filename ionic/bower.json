@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "angular-oauth2": "^4.0.0",
-    "angular-resource": "^1.5.8"
+    "angular-resource": "^1.5.8",
+    "ngCordova": "^0.1.27-alpha"
   }
 }

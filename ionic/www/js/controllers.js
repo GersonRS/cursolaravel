@@ -43,8 +43,8 @@ angular.module('starter.controllers', [])
 }])
 
 .controller('ClientCheckoutCtrl', [
-  '$scope','$state','$cart','Order','$ionicLoading','$ionicPopup','Cupom',
-  function($scope,$state,$cart,Order,$ionicLoading,$ionicPopup,Cupom) {
+  '$scope','$state','$cart','Order','$ionicLoading','$ionicPopup','Cupom','$cordovaBarcodeScanner',
+  function($scope,$state,$cart,Order,$ionicLoading,$ionicPopup,Cupom,$cordovaBarcodeScanner) {
     var cart = $cart.get();
     $scope.cupom = cart.cupom;
     $scope.items = cart.items;
@@ -73,6 +73,7 @@ angular.module('starter.controllers', [])
       };
       Order.save({id:null},o,function(data){
         $ionicLoading.hide();
+        console.log(data);
         $state.go('client.checkout_successful');
       },function(dataError){
         $ionicLoading.hide();
@@ -83,7 +84,16 @@ angular.module('starter.controllers', [])
       });
     };
     $scope.readBarCode = function(){
-        getValueCupom(6158);
+        $cordovaBarcodeScanner
+          .scan()
+          .then(function(barcodeData) {
+              getValueCupom(barcodeData.text);
+        }, function(error) {
+          $ionicPopup.alert({
+            title: "Advertencia",
+            template: "não foi possivel ler o codigo de barras - tente novamente"
+          });
+        });
     };
 
     $scope.removeCupom = function(){
@@ -121,6 +131,7 @@ angular.module('starter.controllers', [])
     $scope.total = $cart.getTotalFinal();
     $cart.clear();
     $scope.openListOrder = function(){
+      $state.go('client.checkout_pedidos');
     };
 }])
 
@@ -132,6 +143,23 @@ angular.module('starter.controllers', [])
       $cart.updateQtd($stateParams.index,$scope.product.amount);
       $state.go('client.checkout');
     }
+}])
+
+.controller('ClientCheckoutPedidos', [
+  '$scope','$state','Orders', "$ionicLoading", "$ionicPopup",
+  function($scope,$state,Orders, $ionicLoading, $ionicPopup) {
+    $scope.pedidos = [];
+
+    Orders.query({}, function(data){
+        $scope.pedidos = data.data;
+        $ionicLoading.hide();
+    }, function(dataError){
+        $ionicLoading.hide();
+        $ionicPopup.alert({
+            title: "Problemas em exibir os pedidos",
+            template: "serviço indisponivel - tente novamente"
+        });
+    });
 }])
 
 .controller("ClientViewProductCtrl", [

@@ -9,6 +9,24 @@ angular.module('starter.services', [])
   });
 
 }])
+.factory('Order', ['$resource','appConfig',function($resource,appConfig) {
+
+  return $resource(appConfig.baseUrl+'/api/client/order/:id',{id:'@id'},{
+    query: {
+      isArray: false
+    }
+  });
+
+}])
+.factory('Orders', ['$resource','appConfig',function($resource,appConfig) {
+
+  return $resource(appConfig.baseUrl+'/api/client/order',{include:'items'},{
+    query: {
+      isArray: false
+    }
+  });
+
+}])
 .factory('Cupom', ['$resource','appConfig',function($resource,appConfig) {
 
   return $resource(appConfig.baseUrl+'/api/cupom/:code',{code: '@code'},{
@@ -171,14 +189,5 @@ angular.module('starter.services', [])
                 }
             });
         }
-
-}])
-.factory('Order', ['$resource','appConfig',function($resource,appConfig) {
-
-  return $resource(appConfig.baseUrl+'/api/client/order/:id',{id:'@id'},{
-    query: {
-      isArray: false
-    }
-  });
 
 }]);

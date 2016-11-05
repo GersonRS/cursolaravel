@@ -6,7 +6,7 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', [
-  'ionic', 'starter.controllers', 'starter.services', 'angular-oauth2','ngResource'
+  'ionic', 'starter.controllers', 'starter.services', 'angular-oauth2','ngResource','ngCordova'
   ])
 .constant('appConfig',{
   baseUrl: 'http://192.168.1.3:8000'
@@ -27,7 +27,7 @@ angular.module('starter', [
   });
 })
 
-.config(function($stateProvider, $urlRouterProvider, OAuthProvider, OAuthTokenProvider, appConfig) {
+.config(function($stateProvider, $urlRouterProvider, OAuthProvider, OAuthTokenProvider, appConfig, $provide) {
 
     OAuthProvider.configure({
       baseUrl: appConfig.baseUrl,
@@ -94,6 +94,16 @@ angular.module('starter', [
       }
     }
   })
+  .state('client.checkout_pedidos', {
+    cache: false,
+    url: '/checkout/pedidos',
+    views: {
+      'client.checkout': {
+        templateUrl: 'templates/client/checkout_pedidos.html',
+        controller: 'ClientCheckoutPedidos'
+      }
+    }
+  })
 
   .state('home', {
     url: '/home',
@@ -109,6 +119,36 @@ angular.module('starter', [
 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');
+
+  $provide.decorator('OAuthToken', ['$localStorage', '$delegate', function ($localStorage, $delegate) {
+            Object.defineProperties($delegate, {
+               setToken:{
+                    value: function (data) {
+                        return $localStorage.setObject('token', data);
+                    },
+                   enumerable: true,
+                   configurable: true,
+                   writable: true
+               },
+                getToken:{
+                    value: function () {
+                        return $localStorage.getObject('token');
+                    },
+                    enumerable: true,
+                    configurable: true,
+                    writable: true
+                },
+                removeToken:{
+                    value: function () {
+                        $localStorage.setObject('token', null);
+                    },
+                    enumerable: true,
+                    configurable: true,
+                    writable: true
+                }
+            });
+            return $delegate;
+  }]);
 
 })
 .service('cart',function(){
