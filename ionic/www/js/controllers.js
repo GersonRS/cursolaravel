@@ -71,9 +71,16 @@ angular.module('starter.controllers', [])
       if ($scope.cupom.value) {
         o.cupom_code = $scope.cupom.code;
       };
+      var total = $scope.total+$scope.cupom.value;
+      if ($scope.cupom.value > total) {
+        $ionicLoading.hide();
+        $ionicPopup.alert({
+            title: "Valor minimo do pedido não alcansado",
+            template: "O valor do Cupom é maior que o valor dos pedidos. Adicione mais itens para se chegar ao valor minimo"
+        });
+      } else {
       Order.save({id:null},o,function(data){
         $ionicLoading.hide();
-        console.log(data);
         $state.go('client.checkout_successful');
       },function(dataError){
         $ionicLoading.hide();
@@ -82,18 +89,20 @@ angular.module('starter.controllers', [])
             template: "dataError = " + JSON.stringify(dataError)
         });
       });
+      }
     };
     $scope.readBarCode = function(){
-        $cordovaBarcodeScanner
-          .scan()
-          .then(function(barcodeData) {
-              getValueCupom(barcodeData.text);
-        }, function(error) {
-          $ionicPopup.alert({
-            title: "Advertencia",
-            template: "não foi possivel ler o codigo de barras - tente novamente"
-          });
-        });
+      getValueCupom(2918);
+        // $cordovaBarcodeScanner
+        //   .scan()
+        //   .then(function(barcodeData) {
+        //       getValueCupom(barcodeData.text);
+        // }, function(error) {
+        //   $ionicPopup.alert({
+        //     title: "Advertencia",
+        //     template: "não foi possivel ler o codigo de barras - tente novamente"
+        //   });
+        // });
     };
 
     $scope.removeCupom = function(){
