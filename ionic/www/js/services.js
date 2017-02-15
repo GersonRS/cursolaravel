@@ -1,5 +1,20 @@
 angular.module('starter.services', [])
 
+.factory('UserData',['$localStorage', function($localStorage) {
+  var key='user';
+  return {
+    set: function(value)
+    {
+      return $localStorage.setObject(key,value);
+    },
+    get:function()
+    {
+      return $localStorage.getObject(key);
+    }
+  }
+
+}])
+
 .factory('Product', ['$resource','appConfig',function($resource,appConfig) {
 
   return $resource(appConfig.baseUrl+'/api/client/products',{},{
@@ -9,23 +24,28 @@ angular.module('starter.services', [])
   });
 
 }])
-.factory('Order', ['$resource','appConfig',function($resource,appConfig) {
-
-  return $resource(appConfig.baseUrl+'/api/client/order/:id',{id:'@id'},{
-    query: {
-      isArray: false
-    }
-  });
-
+.factory('ClientOrder',['$resource','appConfig',function($resource, appConfig){
+        return $resource(appConfig.baseUrl + '/api/client/order/:id',{id: '@id'},{
+            query:{
+                isArray:false
+            }
+        });
 }])
-.factory('Orders', ['$resource','appConfig',function($resource,appConfig) {
-
-  return $resource(appConfig.baseUrl+'/api/client/order',{include:'items'},{
-    query: {
-      isArray: false
+.factory('DeliverymanOrder',['$resource','appConfig',function($resource, appConfig){
+  var url = appConfig.baseUrl + '/api/deliveryman/order/:id';
+  return $resource(url,{id: '@id'},{
+    query:{
+      isArray:false
+    },
+    updateStatus:{
+      method:'PATCH',
+      url:url+'/update-status'
+    },
+    geo:{
+      method:'POST',
+      url:url+'/geo'
     }
   });
-
 }])
 .factory('Cupom', ['$resource','appConfig',function($resource,appConfig) {
 
@@ -36,36 +56,45 @@ angular.module('starter.services', [])
   });
 
 }])
-.factory('User', ['$resource','appConfig',function($resource,appConfig) {
-
-  return $resource(appConfig.baseUrl+'/api/authenticated',{},{
-    query: {
-      isArray: false
+.factory('User',['$resource','appConfig',function($resource,appConfig){
+  return $resource(appConfig.baseUrl + '/api/authenticated',{},{
+    query:{
+      isArray:false
+    },
+    authenticated:{
+      method:'GET',
+      url:appConfig.baseUrl + '/api/authenticated'
+    },
+    updateDeviceToken:{
+      method:'PATCH',
+      url:appConfig.baseUrl+ '/api/device_token'
     }
+
   });
-
 }])
-.factory("$localStorage", ['$window', function($window){
-        return {
-            set: function(key, value){
-                $window.localStorage[key] = value;
-                return $window.localStorage[key];
-            },
+.factory('$localStorage',['$window', function($window) {
+  return {
+    set: function(key, value)
+    {
+      $window.localStorage[key] = value;
+      return $window.localStorage[key];
+    },
+    get:function(key, defaultValue)
+    {
+      return $window.localStorage[key] || defaultValue;
+    },
+    setObject: function(key, value)
+    {
+      $window.localStorage[key] = JSON.stringify(value);
+      return this.getObject(key);
 
-            get: function (key, defaultValue) {
-                return $window.localStorage[key] || defaultValue;
-            },
+    },
+    getObject: function(key)
+    {
+      return JSON.parse($window.localStorage[key] || null);
 
-            setObject: function (key, value) {
-                $window.localStorage[key] = JSON.stringify(value);
-
-                return this.getObject(key);
-            },
-
-            getObject: function (key) {
-                return JSON.parse($window.localStorage[key] || null);
-            }
-        }
+    }
+  }
 }])
 .service('$cart', ['$localStorage', function ($localStorage) {
 
@@ -154,7 +183,7 @@ angular.module('starter.services', [])
 
             $localStorage.setObject(key, cart);
         };
-        
+
         this.getTotalFinal = function () {
           var cart = this.get();
 
@@ -190,4 +219,23 @@ angular.module('starter.services', [])
             });
         }
 
-}]);
+}])
+.service('$redirect',['$state','UserData','appConfig', function($state,UserData,appConfig){
+
+  this.redirectAfterLogin = function(){
+    var user = UserData.get();
+    $state.go(appConfig.redirectAfterLogin[user.role]);
+  };
+
+}])
+.factory('$map',function() {
+
+  return {
+    center:{
+      latitude:0,
+      longitude:0
+    },
+    zoom:12
+  };
+
+});

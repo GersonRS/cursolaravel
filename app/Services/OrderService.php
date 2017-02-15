@@ -71,14 +71,27 @@ class OrderService {
     }
 
 
-	public function updateStatus($id, $idDeliveryman, $status)
-	{
-		$order = $this->orderRepository->getByIdAndDeliverymanId($id,$idDeliveryman);
-		if ($order instanceof Order) {
-			$order->status = $status;
-			$order->save();
-			return $order;
-		}
-		return false;
-	}
+    public function updateStatus($id, $idDeliveryman, $status)
+    {
+        $order = $this->orderRepository->getByIdAndDeliverymanId($id,$idDeliveryman);
+        $order->status = $status;
+
+        switch ((int)$status){
+            case 1:
+                if(!$order->hash){
+                    $order->hash = md5((new \DateTime())->getTimestamp());
+                }
+                $order->save();
+                break;
+            case 2:
+                $user = $order->client->user;
+                $order->save();
+                $this->pushProcessor->notify([$user->device_token],[
+                    'message' => "Seu pedido {$order->id} acabou de ser entergue"
+                ]);
+                break;
+        }
+
+        return $order;
+    }
 }

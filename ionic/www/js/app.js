@@ -6,10 +6,10 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', [
-  'ionic', 'starter.controllers', 'starter.services', 'angular-oauth2','ngResource','ngCordova'
+  'ionic', 'starter.controllers', 'starter.services', 'angular-oauth2','ngResource','ngCordova','starter.filters'
   ])
 .constant('appConfig',{
-  baseUrl: 'http://192.168.1.3:8000'
+  baseUrl: 'http://curso.app'
 })
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -48,12 +48,13 @@ angular.module('starter', [
   // Set up the various states which the app can be in.
   // Each state's controller can be found in controllers.js
   $stateProvider
-
   // setup an abstract state for the clients directive
   .state('client', {
     url: '/client',
     abstract: true,
-    templateUrl: 'templates/client.html'
+    cache: false,
+    controller: 'ClientMenuCtrl',
+    templateUrl: 'templates/client/client.html'
   })
 
   .state('client.checkout', {
@@ -96,13 +97,39 @@ angular.module('starter', [
   })
   .state('client.checkout_pedidos', {
     cache: false,
-    url: '/checkout/pedidos',
+    url: '/pedidos',
     views: {
-      'client.checkout': {
-        templateUrl: 'templates/client/checkout_pedidos.html',
+      'client.checkout_pedidos': {
+        templateUrl: 'templates/client/pedidos.html',
         controller: 'ClientCheckoutPedidos'
       }
     }
+  })
+  .state('client.view_order', {
+    url: '/pedidos/:id',
+    views: {
+      'client.checkout_pedidos': {
+        templateUrl: 'templates/client/pedidos_view.html',
+        controller: 'ClientCheckoutPedidosView'
+      }
+    }
+  })
+  .state('deliveryman', {
+    url: '/deliveryman',
+    abstract:true,
+    cache: false,
+    controller: 'DeliverymanMenuCtrl',
+    templateUrl: 'templates/deliveryman/menu.html'
+  })
+  .state('deliveryman.order', {
+    url: '/order',
+    templateUrl: 'templates/deliveryman/order.html',
+    controller: 'DeliverymanOrderCtrl'
+  })
+  .state('deliveryman.view_order', {
+    url: '/view_order/:id',
+    templateUrl: 'templates/deliveryman/view_order.html',
+    controller: 'DeliverymanViewOrderCtrl'
   })
 
   .state('home', {

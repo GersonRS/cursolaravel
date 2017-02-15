@@ -12,7 +12,8 @@
         "laravelcollective/html": "^5.1",
         "lucadegasperi/oauth2-server-laravel": "5.1.*",
         "league/fractal": "^0.14.0",
-        "barryvdh/laravel-cors": "^0.8.2"
+        "barryvdh/laravel-cors": "^0.8.2",
+        "pusher/pusher-php-server": "~2.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

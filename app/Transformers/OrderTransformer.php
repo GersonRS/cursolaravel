@@ -4,6 +4,7 @@ namespace Ecommerce\Transformers;
 
 use League\Fractal\TransformerAbstract;
 use Ecommerce\Models\Order;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class OrderTransformer
@@ -23,8 +24,8 @@ class OrderTransformer extends TransformerAbstract
         return [
             'id'         => (int) $model->id,
             'total'         => (float) $model->total,
-            'status'         => (int) $model->status,
-            
+            'status'         => $this->getStatusName($model->status),
+            'product_names' => $this->getArrayProductsNames($model->items),
             'created_at' => $model->created_at,
             'updated_at' => $model->updated_at,
         ];

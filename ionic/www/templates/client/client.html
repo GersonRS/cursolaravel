@@ -1,0 +1,56 @@
+<ion-side-menus enable-menu-with-back-views="true">
+    <ion-side-menu side="left">
+      <ion-header-bar class="bar-dark">
+        <h1 class="title">Bem-vindo {{user.name}} !!</h1>
+      </ion-header-bar>
+        <ion-content>
+            <ion-list>
+                <ion-item class="item-icon-left" menu-close ui-sref="client.checkout_pedidos">
+                    <i class="icon ion-android-list"></i>
+                    Meus Pedidos
+                </ion-item>
+                <ion-item class="item-icon-left" menu-close ui-sref="client.checkout">
+                    <i class="icon ion-bag"></i>
+                    Fazer pedido
+                </ion-item>
+            </ion-list>
+        </ion-content>
+
+        <ion-footer-bar class="bar-dark">
+            <h1 class="title">Code Delivery</h1>
+            <div class="buttons">
+                <button class="button button-icon ion-log-out"></button>
+            </div>
+        </ion-footer-bar>
+    </ion-side-menu>
+
+    <ion-side-menu-content>
+        <ion-nav-bar class="bar-positive">
+            <ion-nav-back-button></ion-nav-back-button>
+            <ion-nav-buttons side="left">
+                <button class="button button-clear button-icon ion-navicon" menu-toggle="left"></button>
+            </ion-nav-buttons>
+
+        </ion-nav-bar>
+
+        <ion-tabs class="tabs-icon-top tabs-color-active-positive">
+          <!-- Account Tab -->
+          <ion-tab title="Pedidos" icon-off="ion-ios-home-outline" icon-on="ion-ios-home" href="#/client/pedidos">
+            <ion-nav-view name="client.checkout_pedidos"></ion-nav-view>
+          </ion-tab>
+
+          <!-- Dashboard Tab -->
+          <ion-tab title="View Products" icon-off="ion-ios-pulse" icon-on="ion-ios-pulse-strong" href="#/client/view_products">
+            <ion-nav-view name="client.view_products"></ion-nav-view>
+          </ion-tab>
+
+          <!-- Account Tab -->
+          <ion-tab title="checkout" icon-off="ion-ios-gear-outline" icon-on="ion-ios-gear" href="#/client/checkout">
+            <ion-nav-view name="client.checkout"></ion-nav-view>
+          </ion-tab>
+
+        </ion-tabs>
+
+    </ion-side-menu-content>
+
+</ion-side-menus>

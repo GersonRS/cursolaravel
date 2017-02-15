@@ -23,10 +23,9 @@ class OrderItemTransformer extends TransformerAbstract
     {
         return [
             'id'         => (int) $model->id,
-            'price'      => $model->price,
-            'amount'     => $model->amount,
-            /* place your other model properties here */
-
+            'product_id' => (int) $model->product_id,
+            'price'      => (float) $model->price,
+            'amount'     => (int) $model->amount,
             'created_at' => $model->created_at,
             'updated_at' => $model->updated_at
         ];

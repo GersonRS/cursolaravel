@@ -1,0 +1,24 @@
+<ion-view view-title="Meus Pedidos menu">
+  <div class="bar bar-subheader">
+    <h2 class="title">Meus Pedidos</h2>
+  </div>
+  <ion-content class="padding has-subheader">
+    <ion-refresher pulling-text="Puxe para atualizar..." on-refresh="doRefresh()"></ion-refresher>
+    <ion-list>
+        <ion-item ng-repeat="o in pedidos" ng-click="openOrderDetail(o)" on-hold="showActionSheet(o)">
+                <div class="row">
+                    <div class="col">
+                        <h2>{{ o.created_at.date|limitTo: 10|date: 'dd/MM/yyyy' }}</h2>
+                        <p>{{ o.product_names | limitTo: 2 | join: ', '}}</p>
+                        <i class="ion ion-ios-cart"> {{ o.product_names.length }} Items</i>
+                    </div>
+                </div>
+                {{ o.name }}
+
+                <span class="item-note">
+                    <i class="ion ion-cash">{{ o.total }}</i>
+                </span>
+        </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

@@ -14,7 +14,6 @@ use Ecommerce\Http\Requests\CheckoutRequest;
 
 class ClientCheckoutController extends Controller
 {
-	
 	private $orderRepository;
 	private $userRepository;
 	private $service;	
