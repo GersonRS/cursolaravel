@@ -6,12 +6,18 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', [
-  'ionic', 'starter.controllers', 'starter.services', 'angular-oauth2','ngResource','ngCordova','starter.filters'
+  'ionic', 'starter.controllers', 'starter.services', 'angular-oauth2','ngResource','ngCordova','starter.filters','uiGmapgoogle-maps','pusher-angular', 'permission'
   ])
 .constant('appConfig',{
-  baseUrl: 'http://curso.app'
+  baseUrl: 'http://curso.app',
+  pusherKey:'a8f3686a15a66afa5fd4',
+  redirectAfterLogin:{
+      client: 'client.order',
+      deliveryman: 'deliveryman.order'
+  }
 })
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform,$window,appConfig,$localStorage) {
+    $window.client = new Pusher(appConfig.pusherKey);
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -114,13 +120,23 @@ angular.module('starter', [
       }
     }
   })
-  .state('deliveryman', {
-    url: '/deliveryman',
-    abstract:true,
-    cache: false,
-    controller: 'DeliverymanMenuCtrl',
-    templateUrl: 'templates/deliveryman/menu.html'
-  })
+    .state('client.view_delivery', {
+        cache: false,
+        url: '/view_delivery/:id',
+        views: {
+            'client.checkout_pedidos': {
+                templateUrl: 'templates/client/view_delivery.html',
+                controller: 'ClientViewDeliveryCtrl'
+            }
+        }
+    })
+    .state('deliveryman', {
+        url: '/deliveryman',
+        abstract: true,
+        cache: false,
+        controller: 'DeliverymanMenuCtrl',
+        templateUrl: 'templates/deliveryman/menu.html'
+    })
   .state('deliveryman.order', {
     url: '/order',
     templateUrl: 'templates/deliveryman/order.html',

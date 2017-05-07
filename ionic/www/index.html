@@ -24,16 +24,22 @@
     -->
 
     <!-- ionic/angularjs js -->
-    <script src="lib/ionic/js/ionic.bundle.js"></script>
-<script src="lib/angular-cookies/angular-cookies.min.js"></script>
-<script src="lib/query-string/query-string.js"></script>
-<script src="lib/angular-oauth2/dist/angular-oauth2.min.js"></script>
-<script src="lib/angular-resource/angular-resource.min.js"></script>
+      <script src="lib/jquery/dist/jquery.js"></script>
+      <!-- ionic/angularjs js -->
+      <script src="lib/ionic/js/ionic.bundle.js"></script>
+      <script src="lib/angular-cookies/angular-cookies.min.js"></script>
+      <script src="lib/query-string/query-string.js"></script>
+      <script src="lib/angular-oauth2/dist/angular-oauth2.min.js"></script>
+      <script src="lib/angular-resource/angular-resource.min.js"></script>
+      <script src="lib/lodash/lodash.js"></script>
+      <script src="lib/angular-simple-logger/dist/angular-simple-logger.min.js"></script>
+      <script src="lib/angular-google-maps/dist/angular-google-maps.min.js"></script>
+      <script src="lib/pusher/dist/pusher.js"></script>
+      <script src="lib/pusher-angular/lib/pusher-angular.js"></script>
+      <script src="lib/jquery.easing/js/jquery.easing.min.js"></script>
+      <script src="lib/angular-permission/dist/angular-permission.min.js"></script>
 
     <script src="lib/ngCordova/dist/ng-cordova.js"></script>
-
-    <!-- cordova script (this will be a 404 during development) -->
-    <script src="cordova.js"></script>
 
     <!-- your app's js -->
     <script src="js/app.js"></script>
@@ -55,5 +61,11 @@
       have templates inline in this html file if you'd like).
     -->
     <ion-nav-view></ion-nav-view>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKtcMzv-CBFUg4pSIx6NkimthXdh9nvJw"></script>
+    <script src="lib/marker-animate-unobtrusive/vendor/markerAnimate.js"></script>
+    <script src="lib/marker-animate-unobtrusive/dist/SlidingMarker.min.js"></script>
+    <script type="application/javascript">
+        SlidingMarker.initializeGlobally();
+    </script>
   </body>
 </html>
